@@ -4,14 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Oficinas Municipalidad de la Ciudad de Mendoza</title>
-  <link rel="manifest" href="manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js');
-      });
-    }
-  </script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -107,7 +99,10 @@
     let cargado = false;
 
     function normalizar(texto) {
-      return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "");
     }
 
     function buscar() {
@@ -127,7 +122,9 @@
 
     function mostrar(id) {
       if (!cargado || !datos) return;
-      document.querySelectorAll('.floor-info').forEach(div => div.style.display = 'none');
+      document.querySelectorAll('.floor-info').forEach(div => {
+        if (div && div.style) div.style.display = 'none';
+      });
       const el = document.getElementById(id);
       if (el && el.style) el.style.display = 'block';
     }
