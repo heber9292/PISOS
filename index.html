@@ -96,15 +96,23 @@
 
   <script>
     let datos = null;
+    let cargado = false;
+
+    function normalizar(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "");
+    }
 
     function buscar() {
-      if (!datos) return;
-      const input = document.getElementById('search-input').value.toLowerCase();
+      if (!cargado || !datos) return;
+      const input = document.getElementById('search-input').value;
       const result = document.getElementById('result');
       let encontrado = '';
       for (const piso in datos) {
         datos[piso].forEach(e => {
-          if (e.toLowerCase().includes(input)) {
+          if (normalizar(e).includes(normalizar(input))) {
             encontrado += `<div><strong>${e}</strong> ➝ <u>${piso}</u></div>`;
           }
         });
@@ -113,10 +121,12 @@
     }
 
     function mostrar(id) {
-      if (!datos) return;
-      document.querySelectorAll('.floor-info').forEach(div => div.style.display = 'none');
+      if (!cargado || !datos) return;
+      document.querySelectorAll('.floor-info').forEach(div => {
+        if (div && div.style) div.style.display = 'none';
+      });
       const el = document.getElementById(id);
-      if (el) el.style.display = 'block';
+      if (el && el.style) el.style.display = 'block';
     }
 
     function mostrarTodo() {
@@ -135,6 +145,11 @@
       .then(data => {
         datos = data;
         mostrarTodo();
+        cargado = true;
+      })
+      .catch(err => {
+        console.error("Error cargando datos:", err);
+        document.getElementById('result').innerText = "No se pudo cargar la información.";
       });
   </script>
 </body>
